@@ -1,10 +1,12 @@
+import com.google.gson.Gson;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class ApiFetch {
-    public String fetchApiData(String endpoint) {
+    public Object fetchApiData(String endpoint) {
         try {
             URL url = new URL(endpoint);
             HttpURLConnection conexion = (HttpURLConnection) url.openConnection();
@@ -27,8 +29,10 @@ public class ApiFetch {
             entrada.close();
             conexion.disconnect();
 
-            // Se devuelve la respuesta como cadena JSON
-            return respuesta.toString();
+            // Se procesa la respuesta JSON y se convierte en un objeto Java para retornarlo
+            Gson gson = new Gson();
+            Object jsonObject = gson.fromJson(respuesta.toString(), Object.class);
+            return jsonObject;
         } catch (Exception e) {
             System.out.println("Error al obtener el JSON: " + e.getMessage());
             throw new RuntimeException(e);
