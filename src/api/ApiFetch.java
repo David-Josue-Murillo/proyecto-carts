@@ -10,7 +10,7 @@ import java.net.URL;
 public class ApiFetch {
     public Object fetchApiData() {
         try {
-            URL url = new URL("https://dummyjson.com/carts?limit=15");
+            URL url = new URL("https://dummyjson.com/carts?limit=20");
             HttpURLConnection conexion = (HttpURLConnection) url.openConnection();
 
             // Configurar la conexión
