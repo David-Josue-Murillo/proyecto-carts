@@ -8,6 +8,9 @@ public class Cart {
     private int totalProducts;
     private int totalQuantity;
 
+    public Cart () {
+    }
+
     public Cart(int id, double total, double discountedTotal, int userId, int totalProducts, int totalQuantity) {
         this.id = id;
         this.total = total;
