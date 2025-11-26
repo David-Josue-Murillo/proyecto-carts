@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 public class ApiFetch {
     public Object fetchApiData() {
         HttpURLConnection conexion = null;
+
         try {
             conexion = createConnection("https://dummyjson.com/carts?limit=20");
             String response = readResponse(conexion);
