@@ -8,9 +8,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class ApiFetch {
-    public Object fetchApiData(String endpoint) {
+    public Object fetchApiData() {
         try {
-            URL url = new URL(endpoint);
+            URL url = new URL("https://dummyjson.com/carts?limit=15");
             HttpURLConnection conexion = (HttpURLConnection) url.openConnection();
 
             // Configurar la conexión
