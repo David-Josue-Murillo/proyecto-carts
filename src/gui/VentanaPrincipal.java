@@ -1,3 +1,8 @@
+package gui;
+
+import db.CartDAO;
+import model.Cart;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;

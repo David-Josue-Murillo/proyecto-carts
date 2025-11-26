@@ -1,4 +1,7 @@
-// converte el json en objeto java
+package api;
+
+import model.Cart;
+
 import java.util.List;
 
 public class ApiResponse {

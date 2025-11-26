@@ -1,10 +1,13 @@
-// interactua con la api
+package api;// interactua con la api
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+
 import com.google.gson.Gson;
+import model.Cart;
+
 import java.util.List;
 
 public class ApiClientCarts {

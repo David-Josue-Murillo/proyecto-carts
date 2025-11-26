@@ -1,3 +1,7 @@
+package db;
+
+import model.Cart;
+
 import java.sql.*;
 import java.util.*;
 
