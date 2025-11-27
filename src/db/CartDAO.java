@@ -115,11 +115,12 @@ public class CartDAO {
             ps.setInt(5, cart.getTotalQuantity());
             ps.setInt(6, cart.getId());
 
+            // Ejecuta la actualización y obtiene el número de filas afectadas
             int updateId = ps.executeUpdate();
-            if (updateId == 0) {
+            if (updateId == 0) { // Se verifica si se actualizó algún registro
                 System.out.println("No se encontró el cart ID " + cart.getId() + " para actualizar.");
                 return;
-            }
+            } // Si se actualizó correctamente, entonces se muestra el mensaje de exito
             System.out.println("Cart ID " + cart.getId() + " actualizado correctamente.");
 
         } catch (SQLException e) {
