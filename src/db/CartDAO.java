@@ -8,8 +8,7 @@ import java.util.*;
 public class CartDAO {
 
     //  verifica si el registro ya esxite
-    public boolean existeCarrito(int id) {
-
+    public boolean existCart(int id) {
         boolean existe = false;
         String sql = "SELECT id FROM carts WHERE id = ?";
 
@@ -34,10 +33,9 @@ public class CartDAO {
     /**
      * Inserta un nuevo registro de carrito en la tabla 'carts'.
      */
-    public void insertar(Cart cart) {
-
+    public void insertCart(Cart cart) {
         // Verificar duplicado antes de insertar
-        if (existeCarrito(cart.getId())) {
+        if (existCart(cart.getId())) {
             System.out.println("Carrito ID " + cart.getId() + " ya existe. No se insertó.");
             return;
         }
@@ -65,9 +63,11 @@ public class CartDAO {
     }
 
 
-    // obtiene los registros
-    public List<Cart> obtenerTodos() {
-
+    /**
+     * Recupera todos los carritos almacenados en la base de datos.
+     * Devuelve una lista de objetos Cart para ser usada por la capa de presentación.
+     */
+    public List<Cart> getAll() {
         List<Cart> lista = new ArrayList<>();
         String sql = "SELECT * FROM carts";
 
