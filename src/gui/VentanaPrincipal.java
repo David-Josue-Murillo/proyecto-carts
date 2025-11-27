@@ -117,7 +117,7 @@ public class VentanaPrincipal extends JFrame {
                     c.setTotalProducts(Integer.parseInt(modelo.getValueAt(i, 4).toString()));
                     c.setTotalQuantity(Integer.parseInt(modelo.getValueAt(i, 5).toString()));
 
-                    dao.actualizar(c);
+                    dao.updateCart(c);
                 }
 
                 JOptionPane.showMessageDialog(null, "Base de datos actualizada.");

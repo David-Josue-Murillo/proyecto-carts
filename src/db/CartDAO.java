@@ -101,7 +101,7 @@ public class CartDAO {
      * Actualiza un carrito existente identificado por api_cart_id.
      * Solo actualiza los campos editables: user_id, total, discounted_total, total_products, total_quantity.
      */
-    public void actualizar(Cart cart) {
+    public void updateCart(Cart cart) {
         String sql = "UPDATE carts SET user_id = ?, total = ?, discounted_total = ?, "
                 + "total_products = ?, total_quantity = ? WHERE id = ?";
 
