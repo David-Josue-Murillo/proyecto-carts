@@ -31,13 +31,14 @@ public class CartDAO {
     }
 
 
-    // inserta un carrito
-
-    public void insertar(Cart c) {
+    /**
+     * Inserta un nuevo registro de carrito en la tabla 'carts'.
+     */
+    public void insertar(Cart cart) {
 
         // Verificar duplicado antes de insertar
-        if (existeCarrito(c.getId())) {
-            System.out.println("Carrito ID " + c.getId() + " ya existe. No se insertó.");
+        if (existeCarrito(cart.getId())) {
+            System.out.println("Carrito ID " + cart.getId() + " ya existe. No se insertó.");
             return;
         }
 
@@ -48,15 +49,15 @@ public class CartDAO {
         try (Connection conexion = ConexionBD.getConexion();
              PreparedStatement ps = conexion.prepareStatement(sqlInsert)) {
 
-            ps.setInt(1, c.getId());
-            ps.setDouble(2, c.getTotal());
-            ps.setDouble(3, c.getDiscountedTotal());
-            ps.setInt(4, c.getUserId());
-            ps.setInt(5, c.getTotalProducts());
-            ps.setInt(6, c.getTotalQuantity());
+            ps.setInt(1, cart.getId());
+            ps.setDouble(2, cart.getTotal());
+            ps.setDouble(3, cart.getDiscountedTotal());
+            ps.setInt(4, cart.getUserId());
+            ps.setInt(5, cart.getTotalProducts());
+            ps.setInt(6, cart.getTotalQuantity());
 
             ps.executeUpdate();
-            System.out.println("Carrito ID " + c.getId() + " insertado correctamente.");
+            System.out.println("Carrito ID " + cart.getId() + " insertado correctamente.");
 
         } catch (SQLException e) {
             System.out.println("Error al insertar carrito: " + e.getMessage());
