@@ -4,7 +4,6 @@ import java.sql.*;
 
 public class ConexionBD {
 	public static Connection getConexion() {
-
 		Connection conexion = null;
 
         try {
@@ -24,10 +23,5 @@ public class ConexionBD {
         }
 
         return conexion;
-
     }
-
-    /*public static void main(String[] args) {
-        getConexion();
-    }*/
 }
