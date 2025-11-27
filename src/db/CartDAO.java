@@ -65,7 +65,6 @@ public class CartDAO {
 
     /**
      * Recupera todos los carritos almacenados en la base de datos.
-     * Devuelve una lista de objetos Cart para ser usada por la capa de presentación.
      */
     public List<Cart> getAll() {
         List<Cart> lista = new ArrayList<>();
@@ -93,6 +92,7 @@ public class CartDAO {
             System.out.println("Error al obtener carritos: " + e.getMessage());
         }
 
+        // Devuelve una lista de objetos Cart para ser usada por la capa de presentación.
         return lista;
     }
 
