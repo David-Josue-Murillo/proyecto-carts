@@ -1,6 +1,7 @@
 package api;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,14 +26,24 @@ public class ApiFetch {
             // Se procesa la respuesta JSON y se convierte en un objeto Java para retornarlo
             Gson gson = new Gson();
             return gson.fromJson(response, Object.class);
-        } catch (Exception e) {
+        } catch (IOException e) {
             /*
             * Si ocurre cualquier excepción durante la creación de la conexión o la
             * lectura, se imprime un mensaje por consola y se lanza un
             * RuntimeException envolviendo la causa original.
              */
-            System.out.println("Error al obtener el JSON: " + e.getMessage());
+            System.out.println("Error de conexión al obtener los datos de la API: " + e.getMessage());
             throw new RuntimeException(e);
+        } catch (JsonSyntaxException e) {
+            System.out.println("Error al parsear el JSON de la respuesta: " + e.getMessage());
+            throw new RuntimeException(e);
+        } catch (URISyntaxException e) {
+            System.out.println("Error en la sintaxis de la URL: " + e.getMessage());
+            throw new RuntimeException(e);
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
         }
     }
 
