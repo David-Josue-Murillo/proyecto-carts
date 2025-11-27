@@ -8,16 +8,14 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 
 public class ApiFetch {
     public Object fetchApiData() {
-        HttpURLConnection conexion = null;
+        HttpURLConnection connection = null;
 
         try {
-            conexion = createConnection("https://dummyjson.com/carts?limit=20");
-            String response = readResponse(conexion);
+            connection = createConnection("https://dummyjson.com/carts?limit=20");
+            String response = readResponse(connection);
 
             // Se procesa la respuesta JSON y se convierte en un objeto Java para retornarlo
             Gson gson = new Gson();
@@ -33,14 +31,14 @@ public class ApiFetch {
      */
     private HttpURLConnection createConnection(String urlString) throws IOException, URISyntaxException {
         URI uri = new URI(urlString);
-        HttpURLConnection conexion = (HttpURLConnection) uri.toURL().openConnection();
+        HttpURLConnection connection = (HttpURLConnection) uri.toURL().openConnection();
 
-        conexion.setRequestMethod("GET");
-        conexion.setRequestProperty("Accept", "application/json");
-        conexion.setConnectTimeout(5000);
-        conexion.setReadTimeout(5000);
+        connection.setRequestMethod("GET");
+        connection.setRequestProperty("Accept", "application/json");
+        connection.setConnectTimeout(5000);
+        connection.setReadTimeout(5000);
 
-        return conexion;
+        return connection;
     }
 
     /**
@@ -48,15 +46,15 @@ public class ApiFetch {
      */
     private String readResponse(HttpURLConnection conexion) throws IOException {
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(conexion.getInputStream()))) {
-            StringBuilder respuesta = new StringBuilder();
+            StringBuilder response = new StringBuilder();
             String linea;
 
             // Se construye la respuesta línea por línea
             while ((linea = reader.readLine()) != null) {
-                respuesta.append(linea);
+                response.append(linea);
             }
 
-            return respuesta.toString();
+            return response.toString();
         }
     }
 }
