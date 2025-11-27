@@ -23,4 +23,13 @@ public class ConexionBD {
 
         return conexion;
     }
+
+    public static void main(String[] args) {
+        Connection connection = getConexion();
+        if (connection != null) {
+            System.out.println("Conexión exitosa a la base de datos");
+        } else {
+            System.out.println("No se pudo establecer la conexión a la base de datos");
+        }
+    }
 }
