@@ -83,7 +83,7 @@ public class VentanaPrincipal extends JFrame {
 
                 modelo.setRowCount(0); // limpiar tabla
 
-                List<Cart> lista = dao.obtenerTodos();
+                List<Cart> lista = dao.getAll();
 
                 for (Cart c : lista) {
                     modelo.addRow(new Object[]{
