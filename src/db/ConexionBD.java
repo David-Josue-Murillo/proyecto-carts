@@ -5,12 +5,11 @@ import java.sql.*;
 public class ConexionBD {
 	public static Connection getConexion() {
 		Connection conexion = null;
+        String userName = "root";
+        String password = "root";
+        String url = "jdbc:mysql://localhost:3306/proyecto_carts?characterEncoding=UTF-8";
 
         try {
- 			String userName = "root";
-			String password = "root";
-			String url = "jdbc:mysql://localhost:3306/proyecto_carts?characterEncoding=UTF-8";
-
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             conexion = DriverManager.getConnection(url, userName, password);
