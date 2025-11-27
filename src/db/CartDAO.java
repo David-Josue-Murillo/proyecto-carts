@@ -75,6 +75,7 @@ public class CartDAO {
              PreparedStatement ps = conexion.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
+            // Recorre los resultados y crea objetos Cart
             while (rs.next()) {
                 Cart c = new Cart();
 
@@ -96,27 +97,33 @@ public class CartDAO {
     }
 
 
-    // actualiza el registro
-    public void actualizar(Cart c) {
-
-        String sql = "UPDATE carts SET total = ?, discounted_total = ?, user_id = ?, "
+    /**
+     * Actualiza un carrito existente identificado por api_cart_id.
+     * Solo actualiza los campos editables: user_id, total, discounted_total, total_products, total_quantity.
+     */
+    public void actualizar(Cart cart) {
+        String sql = "UPDATE carts SET user_id = ?, total = ?, discounted_total = ?, "
                 + "total_products = ?, total_quantity = ? WHERE id = ?";
 
         try (Connection conexion = ConexionBD.getConexion();
              PreparedStatement ps = conexion.prepareStatement(sql)) {
 
-            ps.setDouble(1, c.getTotal());
-            ps.setDouble(2, c.getDiscountedTotal());
-            ps.setInt(3, c.getUserId());
-            ps.setInt(4, c.getTotalProducts());
-            ps.setInt(5, c.getTotalQuantity());
-            ps.setInt(6, c.getId());
+            ps.setInt(3, cart.getUserId());
+            ps.setDouble(1, cart.getTotal());
+            ps.setDouble(2, cart.getDiscountedTotal());
+            ps.setInt(4, cart.getTotalProducts());
+            ps.setInt(5, cart.getTotalQuantity());
+            ps.setInt(6, cart.getId());
 
-            ps.executeUpdate();
-            System.out.println("Carrito ID " + c.getId() + " actualizado correctamente.");
+            int updateId = ps.executeUpdate();
+            if (updateId == 0) {
+                System.out.println("No se encontró el cart ID " + cart.getId() + " para actualizar.");
+                return;
+            }
+            System.out.println("Cart ID " + cart.getId() + " actualizado correctamente.");
 
         } catch (SQLException e) {
-            System.out.println("Error al actualizar carrito: " + e.getMessage());
+            System.out.println("Error al actualizar cart: " + e.getMessage());
         }
     }
 }
