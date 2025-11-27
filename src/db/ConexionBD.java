@@ -3,8 +3,8 @@ package db;
 import java.sql.*;
 
 public class ConexionBD {
-	public static Connection getConexion() {
-		Connection conexion = null;
+    public static Connection getConexion() {
+        Connection conexion = null;
         String userName = "root";
         String password = "root";
         String url = "jdbc:mysql://localhost:3306/proyecto_carts?characterEncoding=UTF-8";
@@ -24,6 +24,7 @@ public class ConexionBD {
         return conexion;
     }
 
+    /* Método para probar la conexión
     public static void main(String[] args) {
         Connection connection = getConexion();
         if (connection != null) {
@@ -32,4 +33,5 @@ public class ConexionBD {
             System.out.println("No se pudo establecer la conexión a la base de datos");
         }
     }
+     */
 }
