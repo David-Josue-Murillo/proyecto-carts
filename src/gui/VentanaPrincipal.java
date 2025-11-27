@@ -67,7 +67,7 @@ public class VentanaPrincipal extends JFrame {
 
                 if (lista != null) {
                     for (Cart c : lista) {
-                        dao.insertar(c);
+                        dao.insertCart(c);
                     }
                     JOptionPane.showMessageDialog(null, "Datos cargados desde API y guardados en MySQL.");
                 } else {
