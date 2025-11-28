@@ -8,13 +8,14 @@ import java.util.*;
 public class CartDAO {
 
     //  verifica si el registro ya esxite
-    public boolean existeCarrito(int id) {
-
+    public boolean existCart(int id) {
         boolean existe = false;
         String sql = "SELECT id FROM carts WHERE id = ?";
 
-        try (Connection conn = ConexionBD.getConexion();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        Connection conn = getConnectionOrNull("existCart");
+        if (conn == null) return false;
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
@@ -24,20 +25,27 @@ public class CartDAO {
             }
 
         } catch (SQLException e) {
-            System.out.println("Error al verificar carrito: " + e.getMessage());
+            System.out.println("Error al verificar la existencia del carrito: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try { conn.close(); } catch (SQLException ignored) {}
         }
 
         return existe;
     }
 
 
-    // inserta un carrito
-
-    public void insertar(Cart c) {
+    /**
+     * Inserta un nuevo registro de carrito en la tabla 'carts'.
+     */
+    public void insertCart(Cart cart) {
+        if (cart == null) {
+            throw new IllegalArgumentException("El carrito no puede ser nulo");
+        }
 
         // Verificar duplicado antes de insertar
-        if (existeCarrito(c.getId())) {
-            System.out.println("Carrito ID " + c.getId() + " ya existe. No se insertó.");
+        if (existCart(cart.getId())) {
+            System.out.println("Carrito ID " + cart.getId() + " ya existe. No se insertó.");
             return;
         }
 
@@ -45,77 +53,119 @@ public class CartDAO {
                 + "(id, total, discounted_total, user_id, total_products, total_quantity) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
 
-        try (Connection conexion = ConexionBD.getConexion();
-             PreparedStatement ps = conexion.prepareStatement(sqlInsert)) {
+        Connection conexion = getConnectionOrNull("insertCart");
+        if (conexion == null) return;
 
-            ps.setInt(1, c.getId());
-            ps.setDouble(2, c.getTotal());
-            ps.setDouble(3, c.getDiscountedTotal());
-            ps.setInt(4, c.getUserId());
-            ps.setInt(5, c.getTotalProducts());
-            ps.setInt(6, c.getTotalQuantity());
+        try (PreparedStatement ps = conexion.prepareStatement(sqlInsert)) {
+
+            ps.setInt(1, cart.getId());
+            ps.setDouble(2, cart.getTotal());
+            ps.setDouble(3, cart.getDiscountedTotal());
+            ps.setInt(4, cart.getUserId());
+            ps.setInt(5, cart.getTotalProducts());
+            ps.setInt(6, cart.getTotalQuantity());
 
             ps.executeUpdate();
-            System.out.println("Carrito ID " + c.getId() + " insertado correctamente.");
+            System.out.println("Carrito ID " + cart.getId() + " insertado correctamente.");
 
         } catch (SQLException e) {
             System.out.println("Error al insertar carrito: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try { conexion.close(); } catch (SQLException ignored) {}
         }
     }
 
 
-    // obtiene los registros
-    public List<Cart> obtenerTodos() {
-
+    /**
+     * Recupera todos los carritos almacenados en la base de datos.
+     */
+    public List<Cart> getAll() {
         List<Cart> lista = new ArrayList<>();
         String sql = "SELECT * FROM carts";
 
-        try (Connection conexion = ConexionBD.getConexion();
-             PreparedStatement ps = conexion.prepareStatement(sql);
+        Connection conexion = getConnectionOrNull("getAll");
+        if (conexion == null) {
+            System.out.println("Devolviendo lista vacía por falta de conexión.");
+            return lista;
+        }
+
+        try (PreparedStatement ps = conexion.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
+            // Recorre los resultados y crea objetos Cart
             while (rs.next()) {
-                Cart c = new Cart();
+                Cart cart = new Cart();
 
-                c.setId(rs.getInt("id"));
-                c.setTotal(rs.getDouble("total"));
-                c.setDiscountedTotal(rs.getDouble("discounted_total"));
-                c.setUserId(rs.getInt("user_id"));
-                c.setTotalProducts(rs.getInt("total_products"));
-                c.setTotalQuantity(rs.getInt("total_quantity"));
+                cart.setId(rs.getInt("id"));
+                cart.setTotal(rs.getDouble("total"));
+                cart.setDiscountedTotal(rs.getDouble("discounted_total"));
+                cart.setUserId(rs.getInt("user_id"));
+                cart.setTotalProducts(rs.getInt("total_products"));
+                cart.setTotalQuantity(rs.getInt("total_quantity"));
 
-                lista.add(c);
+                lista.add(cart);
             }
 
         } catch (SQLException e) {
-            System.out.println("Error al obtener carritos: " + e.getMessage());
+            System.out.println("Error al obtener carritos de la base de datos: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try { conexion.close(); } catch (SQLException ignored) {}
         }
 
+        // Devuelve una lista de objetos Cart para ser usada por la capa de presentación.
         return lista;
     }
 
 
-    // actualiza el registro
-    public void actualizar(Cart c) {
+    /**
+     * Actualiza un carrito existente identificado por api_cart_id.
+     * Solo actualiza los campos editables: user_id, total, discounted_total, total_products, total_quantity.
+     */
+    public void updateCart(Cart cart) {
+        if (cart == null) {
+            throw new IllegalArgumentException("El carrito no puede ser nulo");
+        }
 
-        String sql = "UPDATE carts SET total = ?, discounted_total = ?, user_id = ?, "
+        String sql = "UPDATE carts SET user_id = ?, total = ?, discounted_total = ?, "
                 + "total_products = ?, total_quantity = ? WHERE id = ?";
 
-        try (Connection conexion = ConexionBD.getConexion();
-             PreparedStatement ps = conexion.prepareStatement(sql)) {
+        Connection conexion = getConnectionOrNull("updateCart");
+        if (conexion == null) return;
 
-            ps.setDouble(1, c.getTotal());
-            ps.setDouble(2, c.getDiscountedTotal());
-            ps.setInt(3, c.getUserId());
-            ps.setInt(4, c.getTotalProducts());
-            ps.setInt(5, c.getTotalQuantity());
-            ps.setInt(6, c.getId());
+        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
 
-            ps.executeUpdate();
-            System.out.println("Carrito ID " + c.getId() + " actualizado correctamente.");
+            ps.setInt(1, cart.getUserId());
+            ps.setDouble(2, cart.getTotal());
+            ps.setDouble(3, cart.getDiscountedTotal());
+            ps.setInt(4, cart.getTotalProducts());
+            ps.setInt(5, cart.getTotalQuantity());
+            ps.setInt(6, cart.getId());
+
+            // Ejecuta la actualización y obtiene el número de filas afectadas
+            int updateId = ps.executeUpdate();
+            if (updateId == 0) { // Se verifica si se actualizó algún registro
+                System.out.println("No se encontró el cart ID " + cart.getId() + " para actualizar.");
+                return;
+            } // Si se actualizó correctamente, entonces se muestra el mensaje de exito
+            System.out.println("Cart ID " + cart.getId() + " actualizado correctamente.");
 
         } catch (SQLException e) {
-            System.out.println("Error al actualizar carrito: " + e.getMessage());
+            System.out.println("Error al actualizar cart: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try { conexion.close(); } catch (SQLException ignored) {}
         }
     }
+
+    // Método auxiliar para obtener la conexión y validar si es null.
+    private Connection getConnectionOrNull(String callerMethod) {
+        Connection conn = ConexionBD.getConexion();
+        if (conn == null) {
+            System.out.println("No se pudo obtener conexión a la base de datos en " + callerMethod + "().");
+        }
+        return conn;
+    }
+
 }

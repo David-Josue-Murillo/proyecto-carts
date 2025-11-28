@@ -1,6 +1,8 @@
+import gui.MainWindow;
+
 public class Main {
     public static void main(String[] args) {
         System.out.printf("Proyecto-carts");
-        System.out.println("verificando status");
+        new MainWindow().setVisible(true);
     }
 }

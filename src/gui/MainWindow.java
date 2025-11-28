@@ -1,16 +1,18 @@
 package gui;
 
+import api.ApiFetch;
+import api.ApiResponse;
 import db.CartDAO;
 import model.Cart;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 
-public class VentanaPrincipal extends JFrame {
-
+public class MainWindow extends JFrame {
     private JTable tabla;
     private DefaultTableModel modelo;
     private JButton btnCargarAPI;
@@ -19,8 +21,7 @@ public class VentanaPrincipal extends JFrame {
 
     private CartDAO dao = new CartDAO();
 
-    public VentanaPrincipal() {
-
+    public MainWindow() {
         setTitle("Proyecto JSON - MySQL - JTable");
         setSize(900, 400);
         setLocationRelativeTo(null);
@@ -42,8 +43,8 @@ public class VentanaPrincipal extends JFrame {
 
         // Botones
         btnCargarAPI = new JButton("Cargar API -> MySQL");
-        btnMostrarBD = new JButton("Mostrar BD");
-        btnActualizarBD = new JButton("Actualizar BD");
+        btnMostrarBD = new JButton("Mostrar desde BD");
+        btnActualizarBD = new JButton("Guardar cambios");
 
         JPanel panelBotones = new JPanel();
         panelBotones.add(btnCargarAPI);
@@ -61,12 +62,13 @@ public class VentanaPrincipal extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                ApiClientCarts api = new ApiClientCarts();
-                List<Cart> lista = api.obtenerCarts();
+                ApiFetch fetch = new ApiFetch();
+                ApiResponse response = fetch.fetchApiData();
+                List<Cart> lista = response.getCarts();
 
                 if (lista != null) {
-                    for (Cart c : lista) {
-                        dao.insertar(c);
+                    for (Cart carr : lista) {
+                        dao.insertCart(carr);
                     }
                     JOptionPane.showMessageDialog(null, "Datos cargados desde API y guardados en MySQL.");
                 } else {
@@ -82,16 +84,16 @@ public class VentanaPrincipal extends JFrame {
 
                 modelo.setRowCount(0); // limpiar tabla
 
-                List<Cart> lista = dao.obtenerTodos();
+                List<Cart> lista = dao.getAll();
 
                 for (Cart c : lista) {
                     modelo.addRow(new Object[]{
-                        c.getId(),
-                        c.getTotal(),
-                        c.getDiscountedTotal(),
-                        c.getUserId(),
-                        c.getTotalProducts(),
-                        c.getTotalQuantity()
+                            c.getId(),
+                            c.getTotal(),
+                            c.getDiscountedTotal(),
+                            c.getUserId(),
+                            c.getTotalProducts(),
+                            c.getTotalQuantity()
                     });
                 }
 
@@ -116,16 +118,11 @@ public class VentanaPrincipal extends JFrame {
                     c.setTotalProducts(Integer.parseInt(modelo.getValueAt(i, 4).toString()));
                     c.setTotalQuantity(Integer.parseInt(modelo.getValueAt(i, 5).toString()));
 
-                    dao.actualizar(c);
+                    dao.updateCart(c);
                 }
 
                 JOptionPane.showMessageDialog(null, "Base de datos actualizada.");
             }
         });
-    }
-
-    public static void main(String[] args) {
-        VentanaPrincipal v = new VentanaPrincipal();
-        v.setVisible(true);
     }
 }
