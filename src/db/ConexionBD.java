@@ -13,10 +13,14 @@ public class ConexionBD {
             Class.forName("com.mysql.cj.jdbc.Driver");
 
             conexion = DriverManager.getConnection(url, userName, password);
-            System.out.println("Conexión a MySQL exitosa");
+            if (conexion != null) {
+                System.out.println("Conexión a MySQL exitosa");
+            } else {
+                System.out.println("Driver cargado pero DriverManager devolvió null al intentar conectar.");
+            }
 
         } catch (ClassNotFoundException e) {
-            System.out.println("Error: no se encontró el Driver JDBC");
+            System.out.println("Error: no se encontró el Driver JDBC: " + e.getMessage());
         } catch (SQLException e) {
             System.out.println("Error al conectar con MySQL: " + e.getMessage());
         }
