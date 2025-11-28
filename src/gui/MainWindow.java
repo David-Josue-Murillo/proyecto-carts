@@ -1,6 +1,7 @@
 package gui;
 
-import api.ApiClientCarts;
+import api.ApiFetch;
+import api.ApiResponse;
 import db.CartDAO;
 import model.Cart;
 
@@ -61,12 +62,13 @@ public class MainWindow extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                ApiClientCarts api = new ApiClientCarts();
-                java.util.List<Cart> lista = api.obtenerCarts();
+                ApiFetch fetch = new ApiFetch();
+                ApiResponse response = fetch.fetchApiData();
+                List<Cart> lista = response.getCarts();
 
                 if (lista != null) {
-                    for (Cart c : lista) {
-                        dao.insertCart(c);
+                    for (Cart carr : lista) {
+                        dao.insertCart(carr);
                     }
                     JOptionPane.showMessageDialog(null, "Datos cargados desde API y guardados en MySQL.");
                 } else {
