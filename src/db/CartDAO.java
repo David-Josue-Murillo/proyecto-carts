@@ -23,7 +23,7 @@ public class CartDAO {
             }
 
         } catch (SQLException e) {
-            System.out.println("Error al verificar carrito: " + e.getMessage());
+            System.out.println("Error al verificar la existencia del carrito: " + e.getMessage());
         }
 
         return existe;
@@ -34,6 +34,10 @@ public class CartDAO {
      * Inserta un nuevo registro de carrito en la tabla 'carts'.
      */
     public void insertCart(Cart cart) {
+        if (cart == null) {
+            throw new IllegalArgumentException("El carrito no puede ser nulo");
+        }
+
         // Verificar duplicado antes de insertar
         if (existCart(cart.getId())) {
             System.out.println("Carrito ID " + cart.getId() + " ya existe. No se insertó.");
@@ -76,20 +80,20 @@ public class CartDAO {
 
             // Recorre los resultados y crea objetos Cart
             while (rs.next()) {
-                Cart c = new Cart();
+                Cart cart = new Cart();
 
-                c.setId(rs.getInt("id"));
-                c.setTotal(rs.getDouble("total"));
-                c.setDiscountedTotal(rs.getDouble("discounted_total"));
-                c.setUserId(rs.getInt("user_id"));
-                c.setTotalProducts(rs.getInt("total_products"));
-                c.setTotalQuantity(rs.getInt("total_quantity"));
+                cart.setId(rs.getInt("id"));
+                cart.setTotal(rs.getDouble("total"));
+                cart.setDiscountedTotal(rs.getDouble("discounted_total"));
+                cart.setUserId(rs.getInt("user_id"));
+                cart.setTotalProducts(rs.getInt("total_products"));
+                cart.setTotalQuantity(rs.getInt("total_quantity"));
 
-                lista.add(c);
+                lista.add(cart);
             }
 
         } catch (SQLException e) {
-            System.out.println("Error al obtener carritos: " + e.getMessage());
+            System.out.println("Error al obtener carritos de la base de datos: " + e.getMessage());
         }
 
         // Devuelve una lista de objetos Cart para ser usada por la capa de presentación.
@@ -102,15 +106,19 @@ public class CartDAO {
      * Solo actualiza los campos editables: user_id, total, discounted_total, total_products, total_quantity.
      */
     public void updateCart(Cart cart) {
+        if (cart == null) {
+            throw new IllegalArgumentException("El carrito no puede ser nulo");
+        }
+
         String sql = "UPDATE carts SET user_id = ?, total = ?, discounted_total = ?, "
                 + "total_products = ?, total_quantity = ? WHERE id = ?";
 
         try (Connection conexion = ConexionBD.getConexion();
              PreparedStatement ps = conexion.prepareStatement(sql)) {
 
-            ps.setInt(3, cart.getUserId());
-            ps.setDouble(1, cart.getTotal());
-            ps.setDouble(2, cart.getDiscountedTotal());
+            ps.setInt(1, cart.getUserId());
+            ps.setDouble(2, cart.getTotal());
+            ps.setDouble(3, cart.getDiscountedTotal());
             ps.setInt(4, cart.getTotalProducts());
             ps.setInt(5, cart.getTotalQuantity());
             ps.setInt(6, cart.getId());
