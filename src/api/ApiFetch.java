@@ -12,26 +12,21 @@ import java.net.URISyntaxException;
 
 public class ApiFetch {
     /**
-     * Se realiza una petición GET a la URL de carts y devuelve el JSON parseado.
-     * devolvinedo un Object que representa la estructura del JSON. D
+     * Realiza una petición GET a la URL indicada y devuelve un objeto ApiResponse
+     * que representa la respuesta JSON mapeada a objetos Java.
      */
-    public Object fetchApiData() {
+    public ApiResponse fetchApiData() {
         HttpURLConnection connection = null;
 
         try {
             // Se crea y configura la conexión HTTP hacia la URL del API
-            connection = createConnection("https://dummyjson.com/carts?limit=20");
+            connection = createConnection("https://dummyjson.com/carts?limit=15");
             String response = readResponse(connection);
 
-            // Se procesa la respuesta JSON y se convierte en un objeto Java para retornarlo
+            // Se procesa la respuesta JSON y se convierte en un ApiResponse
             Gson gson = new Gson();
-            return gson.fromJson(response, Object.class);
+            return gson.fromJson(response, ApiResponse.class);
         } catch (IOException e) {
-            /*
-            * Si ocurre cualquier excepción durante la creación de la conexión o la
-            * lectura, se imprime un mensaje por consola y se lanza un
-            * RuntimeException envolviendo la causa original.
-             */
             System.out.println("Error de conexión al obtener los datos de la API: " + e.getMessage());
             throw new RuntimeException(e);
         } catch (JsonSyntaxException e) {
