@@ -12,11 +12,8 @@ public class CartDAO {
         boolean existe = false;
         String sql = "SELECT id FROM carts WHERE id = ?";
 
-        Connection conn = ConexionBD.getConexion();
-        if (conn == null) {
-            System.out.println("No se pudo obtener conexión a la base de datos en existCart().");
-            return false;
-        }
+        Connection conn = getConnectionOrNull("existCart");
+        if (conn == null) return false;
 
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
@@ -56,11 +53,8 @@ public class CartDAO {
                 + "(id, total, discounted_total, user_id, total_products, total_quantity) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
 
-        Connection conexion = ConexionBD.getConexion();
-        if (conexion == null) {
-            System.out.println("No se pudo obtener conexión a la base de datos en insertCart().");
-            return;
-        }
+        Connection conexion = getConnectionOrNull("insertCart");
+        if (conexion == null) return;
 
         try (PreparedStatement ps = conexion.prepareStatement(sqlInsert)) {
 
@@ -90,9 +84,9 @@ public class CartDAO {
         List<Cart> lista = new ArrayList<>();
         String sql = "SELECT * FROM carts";
 
-        Connection conexion = ConexionBD.getConexion();
+        Connection conexion = getConnectionOrNull("getAll");
         if (conexion == null) {
-            System.out.println("No se pudo obtener conexión a la base de datos en getAll(). Devolviendo lista vacía.");
+            System.out.println("Devolviendo lista vacía por falta de conexión.");
             return lista;
         }
 
@@ -137,11 +131,8 @@ public class CartDAO {
         String sql = "UPDATE carts SET user_id = ?, total = ?, discounted_total = ?, "
                 + "total_products = ?, total_quantity = ? WHERE id = ?";
 
-        Connection conexion = ConexionBD.getConexion();
-        if (conexion == null) {
-            System.out.println("No se pudo obtener conexión a la base de datos en updateCart().");
-            return;
-        }
+        Connection conexion = getConnectionOrNull("updateCart");
+        if (conexion == null) return;
 
         try (PreparedStatement ps = conexion.prepareStatement(sql)) {
 
@@ -167,4 +158,14 @@ public class CartDAO {
             try { conexion.close(); } catch (SQLException ignored) {}
         }
     }
+
+    // Método auxiliar para obtener la conexión y validar si es null.
+    private Connection getConnectionOrNull(String callerMethod) {
+        Connection conn = ConexionBD.getConexion();
+        if (conn == null) {
+            System.out.println("No se pudo obtener conexión a la base de datos en " + callerMethod + "().");
+        }
+        return conn;
+    }
+
 }
