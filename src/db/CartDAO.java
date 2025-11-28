@@ -1,39 +1,10 @@
 package db;
 
-import model.Cart;
-
 import java.sql.*;
 import java.util.*;
+import model.Cart;
 
 public class CartDAO {
-
-    //  verifica si el registro ya esxite
-    public boolean existCart(int id) {
-        boolean existe = false;
-        String sql = "SELECT id FROM carts WHERE id = ?";
-
-        Connection conn = getConnectionOrNull("existCart");
-        if (conn == null) return false;
-
-        try (PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            ps.setInt(1, id);
-            ResultSet rs = ps.executeQuery();
-
-            if (rs.next()) {
-                existe = true;
-            }
-
-        } catch (SQLException e) {
-            System.out.println("Error al verificar la existencia del carrito: " + e.getMessage());
-            e.printStackTrace();
-        } finally {
-            try { conn.close(); } catch (SQLException ignored) {}
-        }
-
-        return existe;
-    }
-
 
     /**
      * Inserta un nuevo registro de carrito en la tabla 'carts'.
@@ -43,15 +14,19 @@ public class CartDAO {
             throw new IllegalArgumentException("El carrito no puede ser nulo");
         }
 
-        // Verificar duplicado antes de insertar
-        if (existCart(cart.getId())) {
-            System.out.println("Carrito ID " + cart.getId() + " ya existe. No se insertó.");
-            return;
-        }
-
-        String sqlInsert = "INSERT INTO carts "
-                + "(id, total, discounted_total, user_id, total_products, total_quantity) "
-                + "VALUES (?, ?, ?, ?, ?, ?)";
+        /** 
+          *consulta SQL que intenta INSERTAR un nuevo carrito, si el 'id' ya existe (detectado por la clave primaria/única), 
+         en lugar de fallar o duplicar, actualiza los campos especificados con los nuevos valores.
+         */
+        String sqlInsert = "INSERT INTO carts"
+            + "(id, total, discounted_total, user_id, total_products, total_quantity)"
+			+ "VALUES (?, ?, ?, ?, ?, ?) "
+			+ "ON DUPLICATE KEY UPDATE "
+			+ "total = VALUES(total), "
+			+ "discounted_total = VALUES(discounted_total), "
+			+ "user_id = VALUES(user_id), "
+			+ "total_products = VALUES(total_products), "
+			+ "total_quantity = VALUES(total_quantity)";
 
         Connection conexion = getConnectionOrNull("insertCart");
         if (conexion == null) return;
@@ -66,7 +41,7 @@ public class CartDAO {
             ps.setInt(6, cart.getTotalQuantity());
 
             ps.executeUpdate();
-            System.out.println("Carrito ID " + cart.getId() + " insertado correctamente.");
+            System.out.println("Carrito ID " + cart.getId() + " insertado correctamente");
 
         } catch (SQLException e) {
             System.out.println("Error al insertar carrito: " + e.getMessage());
