@@ -7,11 +7,11 @@ import model.Cart;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 
-public class VentanaPrincipal extends JFrame {
-
+public class MainWindow extends JFrame {
     private JTable tabla;
     private DefaultTableModel modelo;
     private JButton btnCargarAPI;
@@ -20,8 +20,7 @@ public class VentanaPrincipal extends JFrame {
 
     private CartDAO dao = new CartDAO();
 
-    public VentanaPrincipal() {
-
+    public MainWindow() {
         setTitle("Proyecto JSON - MySQL - JTable");
         setSize(900, 400);
         setLocationRelativeTo(null);
@@ -43,8 +42,8 @@ public class VentanaPrincipal extends JFrame {
 
         // Botones
         btnCargarAPI = new JButton("Cargar API -> MySQL");
-        btnMostrarBD = new JButton("Mostrar BD");
-        btnActualizarBD = new JButton("Actualizar BD");
+        btnMostrarBD = new JButton("Mostrar desde BD");
+        btnActualizarBD = new JButton("Guardar cambios");
 
         JPanel panelBotones = new JPanel();
         panelBotones.add(btnCargarAPI);
@@ -63,7 +62,7 @@ public class VentanaPrincipal extends JFrame {
             public void actionPerformed(ActionEvent e) {
 
                 ApiClientCarts api = new ApiClientCarts();
-                List<Cart> lista = api.obtenerCarts();
+                java.util.List<Cart> lista = api.obtenerCarts();
 
                 if (lista != null) {
                     for (Cart c : lista) {
@@ -87,12 +86,12 @@ public class VentanaPrincipal extends JFrame {
 
                 for (Cart c : lista) {
                     modelo.addRow(new Object[]{
-                        c.getId(),
-                        c.getTotal(),
-                        c.getDiscountedTotal(),
-                        c.getUserId(),
-                        c.getTotalProducts(),
-                        c.getTotalQuantity()
+                            c.getId(),
+                            c.getTotal(),
+                            c.getDiscountedTotal(),
+                            c.getUserId(),
+                            c.getTotalProducts(),
+                            c.getTotalQuantity()
                     });
                 }
 
@@ -123,10 +122,5 @@ public class VentanaPrincipal extends JFrame {
                 JOptionPane.showMessageDialog(null, "Base de datos actualizada.");
             }
         });
-    }
-
-    public static void main(String[] args) {
-        VentanaPrincipal v = new VentanaPrincipal();
-        v.setVisible(true);
     }
 }
