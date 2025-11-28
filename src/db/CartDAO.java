@@ -12,8 +12,13 @@ public class CartDAO {
         boolean existe = false;
         String sql = "SELECT id FROM carts WHERE id = ?";
 
-        try (Connection conn = ConexionBD.getConexion();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        Connection conn = ConexionBD.getConexion();
+        if (conn == null) {
+            System.out.println("No se pudo obtener conexión a la base de datos en existCart().");
+            return false;
+        }
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
             ResultSet rs = ps.executeQuery();
@@ -24,6 +29,9 @@ public class CartDAO {
 
         } catch (SQLException e) {
             System.out.println("Error al verificar la existencia del carrito: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try { conn.close(); } catch (SQLException ignored) {}
         }
 
         return existe;
@@ -48,8 +56,13 @@ public class CartDAO {
                 + "(id, total, discounted_total, user_id, total_products, total_quantity) "
                 + "VALUES (?, ?, ?, ?, ?, ?)";
 
-        try (Connection conexion = ConexionBD.getConexion();
-             PreparedStatement ps = conexion.prepareStatement(sqlInsert)) {
+        Connection conexion = ConexionBD.getConexion();
+        if (conexion == null) {
+            System.out.println("No se pudo obtener conexión a la base de datos en insertCart().");
+            return;
+        }
+
+        try (PreparedStatement ps = conexion.prepareStatement(sqlInsert)) {
 
             ps.setInt(1, cart.getId());
             ps.setDouble(2, cart.getTotal());
@@ -63,6 +76,9 @@ public class CartDAO {
 
         } catch (SQLException e) {
             System.out.println("Error al insertar carrito: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try { conexion.close(); } catch (SQLException ignored) {}
         }
     }
 
@@ -74,8 +90,13 @@ public class CartDAO {
         List<Cart> lista = new ArrayList<>();
         String sql = "SELECT * FROM carts";
 
-        try (Connection conexion = ConexionBD.getConexion();
-             PreparedStatement ps = conexion.prepareStatement(sql);
+        Connection conexion = ConexionBD.getConexion();
+        if (conexion == null) {
+            System.out.println("No se pudo obtener conexión a la base de datos en getAll(). Devolviendo lista vacía.");
+            return lista;
+        }
+
+        try (PreparedStatement ps = conexion.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
 
             // Recorre los resultados y crea objetos Cart
@@ -94,6 +115,9 @@ public class CartDAO {
 
         } catch (SQLException e) {
             System.out.println("Error al obtener carritos de la base de datos: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try { conexion.close(); } catch (SQLException ignored) {}
         }
 
         // Devuelve una lista de objetos Cart para ser usada por la capa de presentación.
@@ -113,8 +137,13 @@ public class CartDAO {
         String sql = "UPDATE carts SET user_id = ?, total = ?, discounted_total = ?, "
                 + "total_products = ?, total_quantity = ? WHERE id = ?";
 
-        try (Connection conexion = ConexionBD.getConexion();
-             PreparedStatement ps = conexion.prepareStatement(sql)) {
+        Connection conexion = ConexionBD.getConexion();
+        if (conexion == null) {
+            System.out.println("No se pudo obtener conexión a la base de datos en updateCart().");
+            return;
+        }
+
+        try (PreparedStatement ps = conexion.prepareStatement(sql)) {
 
             ps.setInt(1, cart.getUserId());
             ps.setDouble(2, cart.getTotal());
@@ -133,6 +162,9 @@ public class CartDAO {
 
         } catch (SQLException e) {
             System.out.println("Error al actualizar cart: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try { conexion.close(); } catch (SQLException ignored) {}
         }
     }
 }
