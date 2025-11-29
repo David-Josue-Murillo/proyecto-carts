@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.io.IOException;
 
 import com.google.gson.Gson;
 import model.Cart;
@@ -19,11 +20,17 @@ public class ApiClientCarts {
 			String urlStr = "https://dummyjson.com/carts?limit=20";
 			URL url = new URL(urlStr);
 
-            HttpURLConnection conexion = (HttpURLConnection) url.openConnection();
+            HttpURLConnection conexionServer = (HttpURLConnection) url.openConnection();
 
-            conexion.setRequestMethod("GET");
+            conexionServer.setRequestMethod("GET");
 
-            BufferedReader lector = new BufferedReader(new InputStreamReader(conexion.getInputStream()));
+            BufferedReader lector = new BufferedReader(new InputStreamReader(conexionServer.getInputStream()));
+
+            //verificar la respuesta del servidor
+			int responseCode = conexionServer.getResponseCode();
+			if (responseCode != HttpURLConnection.HTTP_OK) {
+				throw new IOException("Error: Código HTTP " + responseCode);
+			}
 
             String linea;
             StringBuilder respuesta = new StringBuilder();
@@ -36,15 +43,19 @@ public class ApiClientCarts {
 
             lista = apiResp.getCarts();
 
-        } catch (Exception e) {
-            System.out.println("Error al obtener los carritos: " + e.getMessage());
-        }
+        } catch (com.google.gson.JsonSyntaxException e) {
+			System.out.println("Error al parsear JSON: " + e.getMessage());
+		} catch (IOException e) {
+			System.out.println("Error de conexión al obtener datos de la API: " + e.getMessage());
+		} catch (Exception e) {
+			System.out.println("Error al obtener los carritos: " + e.getMessage());
+		}
 
         return lista;
     }
 
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         ApiClientCarts api = new ApiClientCarts();
 
         List<Cart> carts = api.obtenerCarts();
@@ -59,5 +70,5 @@ public class ApiClientCarts {
                                    ", Total de productos: " + c.getTotalQuantity() + "\n");
             }
         }
-    }
+    }*/
 }
