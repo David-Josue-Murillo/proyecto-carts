@@ -2,6 +2,7 @@ package gui;
 
 import api.ApiFetch;
 import api.ApiResponse;
+import api.ApiClientCarts;
 import db.CartDAO;
 import model.Cart;
 
@@ -48,7 +49,7 @@ public class MainWindow extends JFrame {
         titlePanel.setBackground(new Color(255, 253, 208));
 
 		// carga icono y se escala a un tamaño 50x50 píxeles
-        ImageIcon icon = new ImageIcon("carrito-de-compras.png");
+        ImageIcon icon = new ImageIcon("img/carrito-de-compras.png");
         icon = new ImageIcon(icon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
         JLabel imgLabel = new JLabel(icon);
         JLabel titleLabel = new JLabel("Gestión de Carritos - API y MySQL");
@@ -116,7 +117,7 @@ public class MainWindow extends JFrame {
                 for (Cart cart : list) dao.insertCart(cart);
 
 				// icono para elmensaje
-                ImageIcon icon = new ImageIcon("exito.png");
+                ImageIcon icon = new ImageIcon("img/exito.png");
                 icon = new ImageIcon(icon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
 
                 JOptionPane.showMessageDialog(null, "Datos cargados desde la API correctamente.", "Información", JOptionPane.INFORMATION_MESSAGE, icon);
@@ -132,14 +133,14 @@ public class MainWindow extends JFrame {
 
             List<Cart> list = dao.getAll();
             // se agrga cada registro a la tabla
-            for (Cart c : list) {
+            for (Cart cart : list) {
                 tableModel.addRow(new Object[]{
-                        c.getId(),
-                        c.getTotal(),
-                        c.getDiscountedTotal(),
-                        c.getUserId(),
-                        c.getTotalProducts(),
-                        c.getTotalQuantity()
+                        cart.getId(),
+                        cart.getTotal(),
+                        cart.getDiscountedTotal(),
+                        cart.getUserId(),
+                        cart.getTotalProducts(),
+                        cart.getTotalQuantity()
                 });
             }
 
@@ -156,20 +157,20 @@ public class MainWindow extends JFrame {
 
 			 // se recorre las filas y se actualiza MySQL
             for (int i = 0; i < rows; i++) {
-                Cart c = new Cart();
+                Cart cart = new Cart();
 
 				 // obtiene datos desde JTable y los asigna al objeto Cart
-                c.setId(Integer.parseInt(tableModel.getValueAt(i, 0).toString()));
-                c.setTotal(Double.parseDouble(tableModel.getValueAt(i, 1).toString()));
-                c.setDiscountedTotal(Double.parseDouble(tableModel.getValueAt(i, 2).toString()));
-                c.setUserId(Integer.parseInt(tableModel.getValueAt(i, 3).toString()));
-                c.setTotalProducts(Integer.parseInt(tableModel.getValueAt(i, 4).toString()));
-                c.setTotalQuantity(Integer.parseInt(tableModel.getValueAt(i, 5).toString()));
+                cart.setId(Integer.parseInt(tableModel.getValueAt(i, 0).toString()));
+                cart.setTotal(Double.parseDouble(tableModel.getValueAt(i, 1).toString()));
+                cart.setDiscountedTotal(Double.parseDouble(tableModel.getValueAt(i, 2).toString()));
+                cart.setUserId(Integer.parseInt(tableModel.getValueAt(i, 3).toString()));
+                cart.setTotalProducts(Integer.parseInt(tableModel.getValueAt(i, 4).toString()));
+                cart.setTotalQuantity(Integer.parseInt(tableModel.getValueAt(i, 5).toString()));
 
-                dao.updateCart(c);
+                dao.updateCart(cart);
             }
 
-            ImageIcon icon = new ImageIcon("exito.png");
+            ImageIcon icon = new ImageIcon("img/exito.png");
             icon = new ImageIcon(icon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
 
             JOptionPane.showMessageDialog(null, "Base de datos actualizada correctamente.", "Actualización", JOptionPane.INFORMATION_MESSAGE, icon);
