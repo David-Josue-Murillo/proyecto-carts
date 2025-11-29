@@ -23,8 +23,6 @@ public class MainWindow extends JFrame {
     private JButton btnHideDB;
 
     private JScrollPane scrollPane; 
-    private final Dimension smallSize = new Dimension(400, 50);
-    private final Dimension largeSize = new Dimension(900, 300);
 
     private CartDAO dao = new CartDAO();
 
@@ -74,7 +72,6 @@ public class MainWindow extends JFrame {
 
         scrollPane = new JScrollPane(table);  // crea scroll contenedor de la tabla
         scrollPane.setVisible(false);   // oculta la tabla al inicio
-        //scrollPane.setPreferredSize(smallSize); // se inicia de forma pequeña
 
         add(scrollPane, BorderLayout.CENTER);
     }
@@ -84,7 +81,7 @@ public class MainWindow extends JFrame {
         JPanel buttonsPanel = new JPanel(); // panel inferior para los botones
         Color buttonColor = new Color(240, 253, 208);
 
-        btnLoadAPI = new JButton("Cargar API - MySQL");
+        btnLoadAPI = new JButton("Cargar API a MySQL");
         btnShowDB = new JButton("Mostrar BD");
         btnUpdateDB = new JButton("Actualizar BD");
         btnHideDB = new JButton("Ocultar BD");
@@ -144,7 +141,6 @@ public class MainWindow extends JFrame {
                 });
             }
 
-            scrollPane.setPreferredSize(largeSize);
             scrollPane.setVisible(true);
             pack(); // ajusta la ventana al nuevo tamaño
             setLocationRelativeTo(null); // se centra despues del ajuste
@@ -178,10 +174,7 @@ public class MainWindow extends JFrame {
 
         // boton de ocultar BD
         btnHideDB.addActionListener(e -> {
-
-            tableModel.setRowCount(0);  // vacia el contenido
             scrollPane.setVisible(false);
-            scrollPane.setPreferredSize(smallSize);
             pack();
             setLocationRelativeTo(null);
         });

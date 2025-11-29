@@ -14,7 +14,7 @@ import java.util.List;
 public class ApiClientCarts {
     public List<Cart> obtenerCarts() {
 
-        List<Cart> lista = null;
+        List<Cart> list = null;
 
         try {
 			String urlStr = "https://dummyjson.com/carts?limit=20";
@@ -24,7 +24,7 @@ public class ApiClientCarts {
 
             conexionServer.setRequestMethod("GET");
 
-            BufferedReader lector = new BufferedReader(new InputStreamReader(conexionServer.getInputStream()));
+            BufferedReader reader = new BufferedReader(new InputStreamReader(conexionServer.getInputStream()));
 
             //verificar la respuesta del servidor
 			int responseCode = conexionServer.getResponseCode();
@@ -32,16 +32,16 @@ public class ApiClientCarts {
 				throw new IOException("Error: Código HTTP " + responseCode);
 			}
 
-            String linea;
+            String line;
             StringBuilder respuesta = new StringBuilder();
-            while ((linea = lector.readLine()) != null) {
-                respuesta.append(linea);
+            while ((line = reader.readLine()) != null) {
+                respuesta.append(line);
             }
 
             Gson gson = new Gson();
             ApiResponse apiResp = gson.fromJson(respuesta.toString(), ApiResponse.class);
 
-            lista = apiResp.getCarts();
+            list = apiResp.getCarts();
 
         } catch (com.google.gson.JsonSyntaxException e) {
 			System.out.println("Error al parsear JSON: " + e.getMessage());
@@ -51,7 +51,7 @@ public class ApiClientCarts {
 			System.out.println("Error al obtener los carritos: " + e.getMessage());
 		}
 
-        return lista;
+        return list;
     }
 
 
