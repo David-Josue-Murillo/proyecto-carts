@@ -13,116 +13,176 @@ import java.awt.event.ActionListener;
 import java.util.List;
 
 public class MainWindow extends JFrame {
-    private JTable tabla;
-    private DefaultTableModel modelo;
-    private JButton btnCargarAPI;
-    private JButton btnMostrarBD;
-    private JButton btnActualizarBD;
+    private JTable table;
+    private DefaultTableModel tableModel;
+
+    private JButton btnLoadAPI;
+    private JButton btnShowDB;
+    private JButton btnUpdateDB;
+    private JButton btnHideDB;
+
+    private JScrollPane scrollPane; 
+    private final Dimension smallSize = new Dimension(400, 50);
+    private final Dimension largeSize = new Dimension(900, 300);
 
     private CartDAO dao = new CartDAO();
 
+    // se realiza un constructor para inicializar la llamada a los metodos
     public MainWindow() {
-        setTitle("Proyecto JSON - MySQL - JTable");
-        setSize(900, 400);
-        setLocationRelativeTo(null);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setTitle("Base de Datos - proyecto_cart");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // cierra el programa al cerrar ventana
+        setLayout(new BorderLayout());   // para poder distribuir en NORTH, CENTER, SOUTH
 
-        // Configurar la tabla
-        modelo = new DefaultTableModel();
-        tabla = new JTable(modelo);
+        initTitlePanel();  // panel que contiene título e icono
+        initTable();  // crea tabla y scroll
+        initButtonsPanel(); // botones y eventos
 
-        modelo.addColumn("ID");
-        modelo.addColumn("Total");
-        modelo.addColumn("Descuento");
-        modelo.addColumn("UserID");
-        modelo.addColumn("Total Productos");
-        modelo.addColumn("Total Cantidad");
+        pack();  // ajusta la ventana al tamaño de sus componentes
+        setLocationRelativeTo(null); // centrar en la pantalla
+    }
 
-        JScrollPane scroll = new JScrollPane(tabla);
+    // metodos para el diseño
 
+    private void initTitlePanel() {
+        JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        titlePanel.setBackground(new Color(255, 253, 208));
 
-        // Botones
-        btnCargarAPI = new JButton("Cargar API -> MySQL");
-        btnMostrarBD = new JButton("Mostrar desde BD");
-        btnActualizarBD = new JButton("Guardar cambios");
+		// carga icono y se escala a un tamaño 50x50 píxeles
+        ImageIcon icon = new ImageIcon("carrito-de-compras.png");
+        icon = new ImageIcon(icon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
+        JLabel imgLabel = new JLabel(icon);
+        JLabel titleLabel = new JLabel("Gestión de Carritos - API y MySQL");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 22));
 
-        JPanel panelBotones = new JPanel();
-        panelBotones.add(btnCargarAPI);
-        panelBotones.add(btnMostrarBD);
-        panelBotones.add(btnActualizarBD);
+        titlePanel.add(imgLabel);
+        titlePanel.add(titleLabel);
 
-        add(scroll, BorderLayout.CENTER);
-        add(panelBotones, BorderLayout.SOUTH);
+        add(titlePanel, BorderLayout.NORTH);
+    }
 
+    private void initTable() {
+        tableModel = new DefaultTableModel();
+        table = new JTable(tableModel);
 
-        // EVENTOS BOTONES
+        tableModel.addColumn("ID");
+        tableModel.addColumn("Total");
+        tableModel.addColumn("Descuento");
+        tableModel.addColumn("UserID");
+        tableModel.addColumn("Total Productos");
+        tableModel.addColumn("Total Cantidad");
 
-        // BOTÓN 1: CARGAR API y guardar en MySQL
-        btnCargarAPI.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        scrollPane = new JScrollPane(table);  // crea scroll contenedor de la tabla
+        scrollPane.setVisible(false);   // oculta la tabla al inicio
+        //scrollPane.setPreferredSize(smallSize); // se inicia de forma pequeña
 
-                ApiFetch fetch = new ApiFetch();
-                ApiResponse response = fetch.fetchApiData();
-                List<Cart> lista = response.getCarts();
+        add(scrollPane, BorderLayout.CENTER);
+    }
 
-                if (lista != null) {
-                    for (Cart carr : lista) {
-                        dao.insertCart(carr);
-                    }
-                    JOptionPane.showMessageDialog(null, "Datos cargados desde API y guardados en MySQL.");
-                } else {
-                    JOptionPane.showMessageDialog(null, "Error al obtener datos de la API.");
-                }
+    // panel de botones y eventos
+    private void initButtonsPanel() {
+        JPanel buttonsPanel = new JPanel(); // panel inferior para los botones
+        Color buttonColor = new Color(240, 253, 208);
+
+        btnLoadAPI = new JButton("Cargar API - MySQL");
+        btnShowDB = new JButton("Mostrar BD");
+        btnUpdateDB = new JButton("Actualizar BD");
+        btnHideDB = new JButton("Ocultar BD");
+
+		// se coloca color alos botones
+        btnLoadAPI.setBackground(buttonColor);
+        btnShowDB.setBackground(buttonColor);
+        btnUpdateDB.setBackground(buttonColor);
+        btnHideDB.setBackground(buttonColor);
+
+        buttonsPanel.add(btnLoadAPI);
+        buttonsPanel.add(btnShowDB);
+        buttonsPanel.add(btnUpdateDB);
+        buttonsPanel.add(btnHideDB);
+
+        add(buttonsPanel, BorderLayout.SOUTH);
+
+        configureEvents(); // agregar eventos de botones
+    }
+
+    // eventos para los botones
+    private void configureEvents() {
+
+        // boton de cargar API
+        btnLoadAPI.addActionListener(e -> {
+            ApiClientCarts api = new ApiClientCarts();
+            List<Cart> list = api.obtenerCarts(); // lista ordenada desde JSON
+
+            if (list != null) {
+                for (Cart cart : list) dao.insertCart(cart);
+
+				// icono para elmensaje
+                ImageIcon icon = new ImageIcon("exito.png");
+                icon = new ImageIcon(icon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+
+                JOptionPane.showMessageDialog(null, "Datos cargados desde la API correctamente.", "Información", JOptionPane.INFORMATION_MESSAGE, icon);
+
+            } else {
+                JOptionPane.showMessageDialog(null, "Error al obtener datos de la API.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
-        // BOTÓN 2: Mostrar datos de MySQL en JTable
-        btnMostrarBD.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        // boton de mostrar BD
+        btnShowDB.addActionListener(e -> {
+            tableModel.setRowCount(0);  // limpia la tabla antes de llenarla
 
-                modelo.setRowCount(0); // limpiar tabla
-
-                List<Cart> lista = dao.getAll();
-
-                for (Cart c : lista) {
-                    modelo.addRow(new Object[]{
-                            c.getId(),
-                            c.getTotal(),
-                            c.getDiscountedTotal(),
-                            c.getUserId(),
-                            c.getTotalProducts(),
-                            c.getTotalQuantity()
-                    });
-                }
-
+            List<Cart> list = dao.getAll();
+            // se agrga cada registro a la tabla
+            for (Cart c : list) {
+                tableModel.addRow(new Object[]{
+                        c.getId(),
+                        c.getTotal(),
+                        c.getDiscountedTotal(),
+                        c.getUserId(),
+                        c.getTotalProducts(),
+                        c.getTotalQuantity()
+                });
             }
+
+            scrollPane.setPreferredSize(largeSize);
+            scrollPane.setVisible(true);
+            pack(); // ajusta la ventana al nuevo tamaño
+            setLocationRelativeTo(null); // se centra despues del ajuste
         });
 
-        // BOTÓN 3: Guardar cambios hechos en JTable -> MySQL
-        btnActualizarBD.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
+        // boton de ctualizar BD
+        btnUpdateDB.addActionListener(e -> {
 
-                int filas = modelo.getRowCount();
+            int rows = tableModel.getRowCount(); // numero de filas de la tabla
 
-                for (int i = 0; i < filas; i++) {
+			 // se recorre las filas y se actualiza MySQL
+            for (int i = 0; i < rows; i++) {
+                Cart c = new Cart();
 
-                    Cart c = new Cart();
+				 // obtiene datos desde JTable y los asigna al objeto Cart
+                c.setId(Integer.parseInt(tableModel.getValueAt(i, 0).toString()));
+                c.setTotal(Double.parseDouble(tableModel.getValueAt(i, 1).toString()));
+                c.setDiscountedTotal(Double.parseDouble(tableModel.getValueAt(i, 2).toString()));
+                c.setUserId(Integer.parseInt(tableModel.getValueAt(i, 3).toString()));
+                c.setTotalProducts(Integer.parseInt(tableModel.getValueAt(i, 4).toString()));
+                c.setTotalQuantity(Integer.parseInt(tableModel.getValueAt(i, 5).toString()));
 
-                    c.setId(Integer.parseInt(modelo.getValueAt(i, 0).toString()));
-                    c.setTotal(Double.parseDouble(modelo.getValueAt(i, 1).toString()));
-                    c.setDiscountedTotal(Double.parseDouble(modelo.getValueAt(i, 2).toString()));
-                    c.setUserId(Integer.parseInt(modelo.getValueAt(i, 3).toString()));
-                    c.setTotalProducts(Integer.parseInt(modelo.getValueAt(i, 4).toString()));
-                    c.setTotalQuantity(Integer.parseInt(modelo.getValueAt(i, 5).toString()));
-
-                    dao.updateCart(c);
-                }
-
-                JOptionPane.showMessageDialog(null, "Base de datos actualizada.");
+                dao.updateCart(c);
             }
+
+            ImageIcon icon = new ImageIcon("exito.png");
+            icon = new ImageIcon(icon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+
+            JOptionPane.showMessageDialog(null, "Base de datos actualizada correctamente.", "Actualización", JOptionPane.INFORMATION_MESSAGE, icon);
+        });
+
+        // boton de ocultar BD
+        btnHideDB.addActionListener(e -> {
+
+            tableModel.setRowCount(0);  // vacia el contenido
+            scrollPane.setVisible(false);
+            scrollPane.setPreferredSize(smallSize);
+            pack();
+            setLocationRelativeTo(null);
         });
     }
 }
