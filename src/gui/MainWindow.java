@@ -81,9 +81,9 @@ public class MainWindow extends JFrame {
         Color buttonColor = new Color(240, 253, 208);
 
         btnLoadAPI = new JButton("Cargar API a MySQL");
-        btnShowDB = new JButton("Mostrar BD");
-        btnUpdateDB = new JButton("Actualizar BD");
-        btnHideDB = new JButton("Ocultar BD");
+        btnShowDB = new JButton("Mostrar datos");
+        btnUpdateDB = new JButton("Actualizar datos");
+        btnHideDB = new JButton("Ocultar datos");
 
 		// se coloca color alos botones
         btnLoadAPI.setBackground(buttonColor);
