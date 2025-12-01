@@ -2,7 +2,6 @@ package gui;
 
 import api.ApiFetch;
 import api.ApiResponse;
-import api.ApiClientCarts;
 import db.CartDAO;
 import model.Cart;
 
@@ -47,7 +46,7 @@ public class MainWindow extends JFrame {
         titlePanel.setBackground(new Color(255, 253, 208));
 
 		// carga icono y se escala a un tamaño 50x50 píxeles
-        ImageIcon icon = new ImageIcon("img/carrito-de-compras.png");
+        ImageIcon icon = new ImageIcon("resources/img/carrito-de-compras.png");
         icon = new ImageIcon(icon.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
         JLabel imgLabel = new JLabel(icon);
         JLabel titleLabel = new JLabel("Gestión de Carritos - API y MySQL");
@@ -107,14 +106,15 @@ public class MainWindow extends JFrame {
 
         // boton de cargar API
         btnLoadAPI.addActionListener(e -> {
-            ApiClientCarts api = new ApiClientCarts();
-            List<Cart> list = api.obtenerCarts(); // lista ordenada desde JSON
+            ApiFetch api = new ApiFetch();
+            ApiResponse response = api.fetchApiData();
+            List<Cart> list = response.getCarts(); // lista ordenada desde JSON
 
             if (list != null) {
                 for (Cart cart : list) dao.insertCart(cart);
 
 				// icono para elmensaje
-                ImageIcon icon = new ImageIcon("img/exito.png");
+                ImageIcon icon = new ImageIcon("resources/img/exito.png");
                 icon = new ImageIcon(icon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
 
                 JOptionPane.showMessageDialog(null, "Datos cargados desde la API correctamente.", "Información", JOptionPane.INFORMATION_MESSAGE, icon);
@@ -166,7 +166,7 @@ public class MainWindow extends JFrame {
                 dao.updateCart(cart);
             }
 
-            ImageIcon icon = new ImageIcon("img/exito.png");
+            ImageIcon icon = new ImageIcon("resources/img/exito.png");
             icon = new ImageIcon(icon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
 
             JOptionPane.showMessageDialog(null, "Base de datos actualizada correctamente.", "Actualización", JOptionPane.INFORMATION_MESSAGE, icon);
