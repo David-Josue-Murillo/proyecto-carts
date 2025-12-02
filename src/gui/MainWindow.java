@@ -118,6 +118,8 @@ public class MainWindow extends JFrame {
     }
 
     private void loadDataFromAPI() {
+        System.out.println("\n### CARGANDO DATOS DESDE LA API ###");
+
         ApiFetch api = new ApiFetch();
         ApiResponse response = api.fetchApiData();
         List<Cart> list = response.getCarts(); // lista ordenada desde JSON
@@ -155,6 +157,8 @@ public class MainWindow extends JFrame {
         scrollPane.setVisible(true);
         pack(); // ajusta la ventana al nuevo tamaño
         setLocationRelativeTo(null); // se centra despues del ajuste
+
+        System.out.println("\n### DATOS CARGADOS CON EXITO ###");
     }
 
     private void updateDatabase() {
