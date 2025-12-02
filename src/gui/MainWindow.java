@@ -114,11 +114,7 @@ public class MainWindow extends JFrame {
         btnUpdateDB.addActionListener(e -> updateDatabase());
 
         // boton de ocultar BD
-        btnHideDB.addActionListener(e -> {
-            scrollPane.setVisible(false);
-            pack();
-            setLocationRelativeTo(null);
-        });
+        btnHideDB.addActionListener(e -> hideDatabaseView());
     }
 
     private void loadDataFromAPI() {
@@ -187,5 +183,11 @@ public class MainWindow extends JFrame {
         icon = new ImageIcon(icon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
 
         JOptionPane.showMessageDialog(null, "Base de datos actualizada correctamente.", "Actualización", JOptionPane.INFORMATION_MESSAGE, icon);
+    }
+
+    private void hideDatabaseView() {
+        scrollPane.setVisible(false);
+        pack();
+        setLocationRelativeTo(null);
     }
 }
