@@ -86,7 +86,7 @@ public class ApiFetch {
             return response.toString();
         }
     }
-
+    /*
     public static void main(String[] args) {
         ApiFetch apiFetch = new ApiFetch();
         ApiResponse response = apiFetch.fetchApiData();
@@ -101,4 +101,5 @@ public class ApiFetch {
             System.out.println("No se pudieron obtener datos de la API.");
         }
     }
+    */
 }
