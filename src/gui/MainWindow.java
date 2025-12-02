@@ -110,31 +110,8 @@ public class MainWindow extends JFrame {
         // boton de mostrar BD
         btnShowDB.addActionListener(e -> showDatabaseData());
 
-        // boton de ctualizar BD
-        btnUpdateDB.addActionListener(e -> {
-
-            int rows = tableModel.getRowCount(); // numero de filas de la tabla
-
-			 // se recorre las filas y se actualiza MySQL
-            for (int i = 0; i < rows; i++) {
-                Cart cart = new Cart();
-
-				 // obtiene datos desde JTable y los asigna al objeto Cart
-                cart.setId(Integer.parseInt(tableModel.getValueAt(i, 0).toString()));
-                cart.setTotal(Double.parseDouble(tableModel.getValueAt(i, 1).toString()));
-                cart.setDiscountedTotal(Double.parseDouble(tableModel.getValueAt(i, 2).toString()));
-                cart.setUserId(Integer.parseInt(tableModel.getValueAt(i, 3).toString()));
-                cart.setTotalProducts(Integer.parseInt(tableModel.getValueAt(i, 4).toString()));
-                cart.setTotalQuantity(Integer.parseInt(tableModel.getValueAt(i, 5).toString()));
-
-                dao.updateCart(cart);
-            }
-
-            ImageIcon icon = new ImageIcon("resources/img/exito.png");
-            icon = new ImageIcon(icon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
-
-            JOptionPane.showMessageDialog(null, "Base de datos actualizada correctamente.", "Actualización", JOptionPane.INFORMATION_MESSAGE, icon);
-        });
+        // boton de actualizar BD
+        btnUpdateDB.addActionListener(e -> updateDatabase());
 
         // boton de ocultar BD
         btnHideDB.addActionListener(e -> {
@@ -186,5 +163,29 @@ public class MainWindow extends JFrame {
         scrollPane.setVisible(true);
         pack(); // ajusta la ventana al nuevo tamaño
         setLocationRelativeTo(null); // se centra despues del ajuste
+    }
+
+    private void updateDatabase() {
+        int rows = tableModel.getRowCount(); // numero de filas de la tabla
+
+        // se recorre las filas y se actualiza MySQL
+        for (int i = 0; i < rows; i++) {
+            Cart cart = new Cart();
+
+            // obtiene datos desde JTable y los asigna al objeto Cart
+            cart.setId(Integer.parseInt(tableModel.getValueAt(i, 0).toString()));
+            cart.setTotal(Double.parseDouble(tableModel.getValueAt(i, 1).toString()));
+            cart.setDiscountedTotal(Double.parseDouble(tableModel.getValueAt(i, 2).toString()));
+            cart.setUserId(Integer.parseInt(tableModel.getValueAt(i, 3).toString()));
+            cart.setTotalProducts(Integer.parseInt(tableModel.getValueAt(i, 4).toString()));
+            cart.setTotalQuantity(Integer.parseInt(tableModel.getValueAt(i, 5).toString()));
+
+            dao.updateCart(cart);
+        }
+
+        ImageIcon icon = new ImageIcon("resources/img/exito.png");
+        icon = new ImageIcon(icon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+
+        JOptionPane.showMessageDialog(null, "Base de datos actualizada correctamente.", "Actualización", JOptionPane.INFORMATION_MESSAGE, icon);
     }
 }
