@@ -20,7 +20,7 @@ public class ApiFetch {
 
         try {
             // Se crea y configura la conexión HTTP hacia la URL del API
-            connection = createConnection("https://dummyjson.com/carts?limit=15");
+            connection = createConnection("https://dummyjson.com/carts?limit=20");
             String response = readResponse(connection);
 
             // Se procesa la respuesta JSON y se convierte en un ApiResponse
@@ -84,6 +84,21 @@ public class ApiFetch {
             }
 
             return response.toString();
+        }
+    }
+
+    public static void main(String[] args) {
+        ApiFetch apiFetch = new ApiFetch();
+        ApiResponse response = apiFetch.fetchApiData();
+
+        if (response != null && response.getCarts() != null) {
+            System.out.println("Datos obtenidos de la API:");
+            response.getCarts().forEach(cart -> {
+                System.out.printf("ID: %d, Total: %.2f, UserID: %d%n",
+                        cart.getId(), cart.getTotal(), cart.getUserId());
+            });
+        } else {
+            System.out.println("No se pudieron obtener datos de la API.");
         }
     }
 }
