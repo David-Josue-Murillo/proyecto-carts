@@ -136,9 +136,11 @@ public class MainWindow extends JFrame {
         } else {
             JOptionPane.showMessageDialog(null, "Error al obtener datos de la API.", "Error", JOptionPane.ERROR_MESSAGE);
         }
+        System.out.println("\n### DATOS CARGADOS CON EXITO ###");
     }
 
     private void showDatabaseData() {
+        System.out.println("\n### MOSTRANDO LOS DATOS ALMANECADOS ###");
         tableModel.setRowCount(0);  // limpia la tabla antes de llenarla
 
         List<Cart> list = dao.getAll();
@@ -157,11 +159,10 @@ public class MainWindow extends JFrame {
         scrollPane.setVisible(true);
         pack(); // ajusta la ventana al nuevo tamaño
         setLocationRelativeTo(null); // se centra despues del ajuste
-
-        System.out.println("\n### DATOS CARGADOS CON EXITO ###");
     }
 
     private void updateDatabase() {
+        System.out.println("\n### ACTUALIZANDO LA BASE DE DATOS DESDE LA TABLA ###");
         int rows = tableModel.getRowCount(); // numero de filas de la tabla
 
         // se recorre las filas y se actualiza MySQL
@@ -183,6 +184,7 @@ public class MainWindow extends JFrame {
         icon = new ImageIcon(icon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
 
         JOptionPane.showMessageDialog(null, "Base de datos actualizada correctamente.", "Actualización", JOptionPane.INFORMATION_MESSAGE, icon);
+        System.out.println("\n### BASE DE DATOS ACTUALIZADA ###");
     }
 
     private void hideDatabaseView() {
