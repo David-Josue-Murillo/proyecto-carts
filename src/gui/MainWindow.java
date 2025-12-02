@@ -105,24 +105,7 @@ public class MainWindow extends JFrame {
     private void configureEvents() {
 
         // boton de cargar API
-        btnLoadAPI.addActionListener(e -> {
-            ApiFetch api = new ApiFetch();
-            ApiResponse response = api.fetchApiData();
-            List<Cart> list = response.getCarts(); // lista ordenada desde JSON
-
-            if (list != null) {
-                for (Cart cart : list) dao.insertCart(cart);
-
-				// icono para elmensaje
-                ImageIcon icon = new ImageIcon("resources/img/exito.png");
-                icon = new ImageIcon(icon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
-
-                JOptionPane.showMessageDialog(null, "Datos cargados desde la API correctamente.", "Información", JOptionPane.INFORMATION_MESSAGE, icon);
-
-            } else {
-                JOptionPane.showMessageDialog(null, "Error al obtener datos de la API.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        });
+        btnLoadAPI.addActionListener(e -> loadDataFromAPI());
 
         // boton de mostrar BD
         btnShowDB.addActionListener(e -> {
@@ -178,5 +161,28 @@ public class MainWindow extends JFrame {
             pack();
             setLocationRelativeTo(null);
         });
+    }
+
+    private void loadDataFromAPI() {
+        // Deshabilitar botón durante la operación
+        btnLoadAPI.setEnabled(false);
+        btnLoadAPI.setText("Cargando...");
+
+        ApiFetch api = new ApiFetch();
+        ApiResponse response = api.fetchApiData();
+        List<Cart> list = response.getCarts(); // lista ordenada desde JSON
+
+        if (list != null) {
+            for (Cart cart : list) dao.insertCart(cart);
+
+            // icono para elmensaje
+            ImageIcon icon = new ImageIcon("resources/img/exito.png");
+            icon = new ImageIcon(icon.getImage().getScaledInstance(30, 30, Image.SCALE_SMOOTH));
+
+            JOptionPane.showMessageDialog(null, "Datos cargados desde la API correctamente.", "Información", JOptionPane.INFORMATION_MESSAGE, icon);
+
+        } else {
+            JOptionPane.showMessageDialog(null, "Error al obtener datos de la API.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 }
