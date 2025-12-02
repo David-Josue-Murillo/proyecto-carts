@@ -118,10 +118,6 @@ public class MainWindow extends JFrame {
     }
 
     private void loadDataFromAPI() {
-        // Deshabilitar botón durante la operación
-        btnLoadAPI.setEnabled(false);
-        btnLoadAPI.setText("Cargando...");
-
         ApiFetch api = new ApiFetch();
         ApiResponse response = api.fetchApiData();
         List<Cart> list = response.getCarts(); // lista ordenada desde JSON
