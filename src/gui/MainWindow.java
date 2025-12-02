@@ -108,26 +108,7 @@ public class MainWindow extends JFrame {
         btnLoadAPI.addActionListener(e -> loadDataFromAPI());
 
         // boton de mostrar BD
-        btnShowDB.addActionListener(e -> {
-            tableModel.setRowCount(0);  // limpia la tabla antes de llenarla
-
-            List<Cart> list = dao.getAll();
-            // se agrga cada registro a la tabla
-            list.forEach(cart -> {
-                tableModel.addRow(new Object[]{
-                        cart.getId(),
-                        cart.getTotal(),
-                        cart.getDiscountedTotal(),
-                        cart.getUserId(),
-                        cart.getTotalProducts(),
-                        cart.getTotalQuantity()
-                });
-            });
-
-            scrollPane.setVisible(true);
-            pack(); // ajusta la ventana al nuevo tamaño
-            setLocationRelativeTo(null); // se centra despues del ajuste
-        });
+        btnShowDB.addActionListener(e -> showDatabaseData());
 
         // boton de ctualizar BD
         btnUpdateDB.addActionListener(e -> {
@@ -184,5 +165,26 @@ public class MainWindow extends JFrame {
         } else {
             JOptionPane.showMessageDialog(null, "Error al obtener datos de la API.", "Error", JOptionPane.ERROR_MESSAGE);
         }
+    }
+
+    private void showDatabaseData() {
+        tableModel.setRowCount(0);  // limpia la tabla antes de llenarla
+
+        List<Cart> list = dao.getAll();
+        // se agrga cada registro a la tabla
+        list.forEach(cart -> {
+            tableModel.addRow(new Object[]{
+                    cart.getId(),
+                    cart.getTotal(),
+                    cart.getDiscountedTotal(),
+                    cart.getUserId(),
+                    cart.getTotalProducts(),
+                    cart.getTotalQuantity()
+            });
+        });
+
+        scrollPane.setVisible(true);
+        pack(); // ajusta la ventana al nuevo tamaño
+        setLocationRelativeTo(null); // se centra despues del ajuste
     }
 }
