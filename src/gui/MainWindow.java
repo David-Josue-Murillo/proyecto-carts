@@ -130,7 +130,7 @@ public class MainWindow extends JFrame {
 
             List<Cart> list = dao.getAll();
             // se agrga cada registro a la tabla
-            for (Cart cart : list) {
+            list.forEach(cart -> {
                 tableModel.addRow(new Object[]{
                         cart.getId(),
                         cart.getTotal(),
@@ -139,7 +139,7 @@ public class MainWindow extends JFrame {
                         cart.getTotalProducts(),
                         cart.getTotalQuantity()
                 });
-            }
+            });
 
             scrollPane.setVisible(true);
             pack(); // ajusta la ventana al nuevo tamaño
